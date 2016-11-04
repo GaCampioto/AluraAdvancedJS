@@ -5,19 +5,45 @@ class NegociacaoController {
         this._inputData = $("#data");
         this._inputQuantidade = $("#quantidade");
         this._inputValor = $("#valor");
-        this._listaNegociacoes = new ListaNegociacoes();
+        let self = this; // guarda em uma variável o valor de this
+        this._listaNegociacoes = new Proxy(new ListaNegociacoes(), {
+
+            get(target, prop, receiver) {
+                if(['adiciona', 'esvazia'].includes(prop) && typeof(target[prop]) === typeof(Function)) {
+                    return function() {
+                        console.log(`método '${prop}' interceptado`);
+                        Reflect.apply(target[prop], target, arguments);
+
+                        // acessa o self que a instância de NegociacoesController
+                        self._negociacoesView.update(target);
+                    }
+                }
+                return Reflect.get(target, prop, receiver);   
+            }
+        });
+        
+        this._negociacoesView = new NegociacoesView($("#negociacoesView"));
+        this._negociacoesView.update(this._listaNegociacoes);
+        
+        this._mensagem = new Mensagem();
+        this._mensagemView = new MensagemView($("#mensagemView"));
+        this._mensagemView.update(this._mensagem);
     }
 
     adiciona (event) {
         event.preventDefault();    
-            
         let negociacao = this._criarNegociacao();
         this._limparFormulario();
+        this._listaNegociacoes.adiciona(negociacao);
+        this._mensagem.text = "Negociação adiconada com sucesso!";
+        this._mensagemView.update(this._mensagem);
+    }
 
-        this._listaNegociacoes.adiciona(negociacao);        
-
-        console.log(negociacao);
-        console.log(this._listaNegociacoes);
+    esvazia(event) {
+        event.preventDefault();
+        this._listaNegociacoes.esvazia();
+        this._mensagem.text = "Negociação removida com sucesso!";
+        this._mensagemView.update(this._mensagem);
     }
 
     _criarNegociacao(){

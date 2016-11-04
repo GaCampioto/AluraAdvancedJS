@@ -15,6 +15,6 @@ class DateHelper {
     }
 
     static dateToText(data){
-        return `${data.getDay()}/${data.getMonth() + 1}/${data.getFullYear}`;
+        return `${data.getDay()}/${data.getMonth() + 1}/${data.getFullYear()}`;
     }
 }
