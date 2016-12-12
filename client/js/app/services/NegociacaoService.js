@@ -24,7 +24,7 @@ class NegociacaoService {
                 .then(negociacoes => 
                     negociacoes.filter(negociacao => 
                         !listaAtual.some( negociacaoLista => 
-                            JSON.stringify(negociacaoLista) == JSON.stringify(negociacao))))
+                            negociacao.equals(negociacaoLista))))
                 .catch(error => {
                     console.log(error);
                     throw new Error("Não foi possível recuperar as negociações");
