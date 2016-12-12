@@ -19,6 +19,42 @@ class NegociacaoService {
             });
     }
 
+    importa(listaAtual){
+        return this.obterNegociacoes()
+                .then(negociacoes => 
+                    negociacoes.filter(negociacao => 
+                        !listaAtual.some( negociacaoLista => 
+                            JSON.stringify(negociacaoLista) == JSON.stringify(negociacao))))
+                .catch(error => {
+                    console.log(error);
+                    throw new Error("Não foi possível recuperar as negociações");
+                });
+    }
+
+    adiciona(negociacao){
+        return ConnectionFactory
+            .getConnection()
+            .then(connection => new NegociacaoDao(connection))
+            .then(dao => dao.adiciona(negociacao))
+            .then(() => "Negociação adicionada com sucesso!")
+            .catch(errorMessage => {
+                console.log(errorMessage);
+                throw new Error("Não foi possível adicionar a negociação!");
+            });
+    }
+
+    apagar(){
+        return ConnectionFactory
+            .getConnection()
+            .then(connection => new NegociacaoDao(connection))
+            .then(dao => dao.apagarTodos())
+            .then(message => "Negociações apagadas com sucesso!")
+            .catch(errorMessage => {
+                console.log(errorMessage);
+                throw new Error("Não foi possível apagar as negociações!");
+            });
+    }    
+
     _importarNegociacoesDaSemana(){
         return  this._HttpService.get("/negociacoes/semana")
             .then(negociacoes => {
