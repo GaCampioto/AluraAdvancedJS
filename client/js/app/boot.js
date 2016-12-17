@@ -11,7 +11,7 @@ System.register(['./controllers/NegociacaoController', './polyfill/fetch'], func
     execute: function () {
       negociacaoController = currentInstance();
 
-
+      //PROJETO FINALIZADO
       document.querySelector('.form').onsubmit = negociacaoController.adiciona.bind(negociacaoController);
       document.querySelector('button[type=button]').onclick = negociacaoController.apagar.bind(negociacaoController);
     }
